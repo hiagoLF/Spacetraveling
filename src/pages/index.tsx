@@ -1,12 +1,14 @@
 import { useState } from 'react';
 import { GetStaticProps } from 'next';
+import { FiCalendar } from 'react-icons/fi';
+import { FiUser } from 'react-icons/fi';
 import Prismic from '@prismicio/client';
 import Link from 'next/link';
 import Head from 'next/head';
 import { getPrismicClient } from '../services/prismic';
-// import commonStyles from '../styles/common.module.scss';
 import styles from './home.module.scss';
 import formatPostIndexes from '../services/formatPostIndexes';
+import formatDate from '../services/formatDate';
 
 interface Post {
   uid?: string;
@@ -59,12 +61,10 @@ const Home: React.FC<HomeProps> = ({ postsPagination }) => {
                   <p>{post.data.subtitle}</p>
                   <div>
                     <time>
-                      <img src="/icons/calendar.svg" alt="calendar" />
-                      {post.first_publication_date}
+                      <FiCalendar /> {formatDate(post.first_publication_date)}
                     </time>
                     <address>
-                      <img src="/icons/user.svg" alt="calendar" />
-                      {post.data.author}
+                      <FiUser /> {post.data.author}
                     </address>
                   </div>
                 </a>
@@ -108,6 +108,6 @@ export const getStaticProps: GetStaticProps = async () => {
         results: postsFormated,
       },
     },
-    revalidate: 60 * 60 * 24, // 24 hours
+    revalidate: 60 * 60, // 1 hour
   };
 };
