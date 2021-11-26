@@ -1,1 +1,60 @@
-// TODO
+.headerContainer {
+  width: 100%;
+
+  > img {
+    width: 100%;
+  }
+}
+
+.headerTextsContainer {
+  max-width: 721px;
+  margin: 0 auto;
+  padding-top: 40px;
+  padding-bottom: 40px;
+
+  h2 {
+    font-size: 2.2rem;
+    padding-bottom: 20px;
+  }
+
+  section {
+    display: flex;
+    align-items: center;
+  }
+
+  time,
+  address,
+  span {
+    display: flex;
+    align-items: center;
+    margin-right: 20px;
+
+    :first-child {
+      margin-right: 5px;
+    }
+
+    color: var(--gray-200);
+  }
+}
+
+.articleContainer {
+  max-width: 721px;
+  margin: 0 auto;
+
+  > div {
+    padding-bottom: 25px;
+
+    h3 {
+      font-size: 1.5rem;
+      padding-bottom: 20px;
+    }
+
+    p {
+      color: var(--gray-200);
+
+      & + p {
+        margin-top: 20px;
+      }
+    }
+  }
+}

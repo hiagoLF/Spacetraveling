@@ -1,12 +1,12 @@
-import { useCallback, useState } from 'react';
+import { useState } from 'react';
 import { GetStaticProps } from 'next';
-import { format } from 'date-fns';
-import ptBR from 'date-fns/locale/pt-BR';
 import Prismic from '@prismicio/client';
+import Link from 'next/link';
 import Head from 'next/head';
 import { getPrismicClient } from '../services/prismic';
 // import commonStyles from '../styles/common.module.scss';
 import styles from './home.module.scss';
+import formatPostIndexes from '../services/formatPostIndexes';
 
 interface Post {
   uid?: string;
@@ -34,21 +34,8 @@ const Home: React.FC<HomeProps> = ({ postsPagination }) => {
   async function handleMorePostsButtonClick(): Promise<void> {
     const result = await fetch(nextPage);
     const prismicResult = await result.json();
-    const newPosts = prismicResult.results.map(post => ({
-      uid: post.uid,
-      first_publication_date: format(
-        new Date(post.first_publication_date),
-        'd MMM yyyy',
-        {
-          locale: ptBR,
-        }
-      ),
-      data: {
-        title: post.data.title,
-        subtitle: post.data.subtitle,
-        author: post.data.author,
-      },
-    }));
+    const newPosts = formatPostIndexes(prismicResult);
+
     setNextPage(prismicResult.next_page);
     setPosts([...posts, ...newPosts]);
   }
@@ -66,18 +53,22 @@ const Home: React.FC<HomeProps> = ({ postsPagination }) => {
         <ul className={styles.postsContainer}>
           {posts.map(post => (
             <li key={post.uid}>
-              <h3>{post.data.title}</h3>
-              <p>{post.data.subtitle}</p>
-              <div>
-                <time>
-                  <img src="/icons/calendar.svg" alt="calendar" />
-                  {post.first_publication_date}
-                </time>
-                <address>
-                  <img src="/icons/user.svg" alt="calendar" />
-                  {post.data.author}
-                </address>
-              </div>
+              <Link href={`/post/${post.uid}`}>
+                <a>
+                  <h3>{post.data.title}</h3>
+                  <p>{post.data.subtitle}</p>
+                  <div>
+                    <time>
+                      <img src="/icons/calendar.svg" alt="calendar" />
+                      {post.first_publication_date}
+                    </time>
+                    <address>
+                      <img src="/icons/user.svg" alt="calendar" />
+                      {post.data.author}
+                    </address>
+                  </div>
+                </a>
+              </Link>
             </li>
           ))}
         </ul>
@@ -108,21 +99,7 @@ export const getStaticProps: GetStaticProps = async () => {
     }
   );
 
-  const postsFormated = postsResponse.results.map(post => ({
-    uid: post.uid,
-    first_publication_date: format(
-      new Date(post.first_publication_date),
-      'd MMM yyyy',
-      {
-        locale: ptBR,
-      }
-    ),
-    data: {
-      title: post.data.title,
-      subtitle: post.data.subtitle,
-      author: post.data.author,
-    },
-  }));
+  const postsFormated = formatPostIndexes(postsResponse);
 
   return {
     props: {
@@ -131,5 +108,6 @@ export const getStaticProps: GetStaticProps = async () => {
         results: postsFormated,
       },
     },
+    revalidate: 60 * 60 * 24, // 24 hours
   };
 };

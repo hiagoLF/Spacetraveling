@@ -16,43 +16,45 @@
   flex-direction: column;
 
   li {
-    margin-bottom: 30px;
-    cursor: pointer;
+    a {
+      margin-bottom: 30px;
+      cursor: pointer;
 
-    h3 {
-      font-size: 1.5rem;
-      margin-bottom: 5px;
-      transition: color 0.2s;
-    }
-
-    p {
-      color: var(--gray-400);
-      margin-bottom: 10px;
-    }
-
-    > div {
-      display: flex;
-      color: var(--gray-200);
-      font-size: 0.9rem;
-
-      time {
-        margin-right: 20px;
+      h3 {
+        font-size: 1.5rem;
+        margin-bottom: 5px;
+        transition: color 0.2s;
       }
 
-      time,
-      address {
-        display: flex;
-        align-items: center;
+      p {
+        color: var(--gray-400);
+        margin-bottom: 10px;
+      }
 
-        img {
-          margin-right: 5px;
+      > div {
+        display: flex;
+        color: var(--gray-200);
+        font-size: 0.9rem;
+
+        time {
+          margin-right: 20px;
+        }
+
+        time,
+        address {
+          display: flex;
+          align-items: center;
+
+          img {
+            margin-right: 5px;
+          }
         }
       }
-    }
 
-    &:hover {
-      h3 {
-        color: var(--yellow-500);
+      &:hover {
+        h3 {
+          color: var(--yellow-500);
+        }
       }
     }
   }
