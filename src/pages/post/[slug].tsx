@@ -6,6 +6,7 @@ import { FiCalendar } from 'react-icons/fi';
 import { FiUser } from 'react-icons/fi';
 import { FiClock } from 'react-icons/fi';
 import { useRouter } from 'next/router';
+import PrismicDOM from 'prismic-dom';
 import Header from '../../components/Header';
 import { getPrismicClient } from '../../services/prismic';
 import styles from './post.module.scss';
@@ -33,22 +34,23 @@ interface PostProps {
 }
 
 const Post: React.FC<PostProps> = ({ post }) => {
+  // const readingTime = 4;
   const readingTime = useMemo(() => {
-    try {
-      const time = (
-        post.data.content.reduce((totalReadindTime, currentContent) => {
-          const bodyWordsNumber = currentContent.body.reduce((acc, current) => {
-            return acc + current.text.split(' ').length;
-          }, 0);
-          const titleWordsNumber = currentContent.heading.split(' ').length;
+    if (!post?.data?.content) return 0;
 
-          return totalReadindTime + bodyWordsNumber + titleWordsNumber;
-        }, 0) / 200
-      ).toFixed();
-      return time;
-    } catch {
-      return 0;
-    }
+    const wordsNumber = post.data.content.reduce(
+      (wordsAccumulator, currentContent) => {
+        const bodyWordsNumber = PrismicDOM.RichText.asText(
+          currentContent.body
+        ).split(' ').length;
+
+        const titleWordsNumber = currentContent.heading.split(' ').length;
+
+        return wordsAccumulator + bodyWordsNumber + titleWordsNumber;
+      },
+      0
+    );
+    return Math.ceil(wordsNumber / 200);
   }, [post]);
 
   const router = useRouter();
@@ -130,18 +132,9 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
   const prismic = getPrismicClient();
   const response = await prismic.getByUID('posts', String(slug), {});
 
-  console.log('response to document >> ', response);
-
-  const first_publication_date = formatDate(response.first_publication_date);
-
-  const post: Post = {
-    first_publication_date,
-    data: response.data,
-  };
-
   return {
     props: {
-      post,
+      post: response,
     },
     revalidate: 60 * 60, // 1 hour
   };
