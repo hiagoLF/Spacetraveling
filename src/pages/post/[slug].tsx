@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { GetStaticPaths, GetStaticProps } from 'next';
 import Head from 'next/head';
 import Prismic from '@prismicio/client';
@@ -34,7 +34,8 @@ interface PostProps {
 }
 
 const Post: React.FC<PostProps> = ({ post }) => {
-  // const readingTime = 4;
+  const router = useRouter();
+
   const readingTime = useMemo(() => {
     if (!post?.data?.content) return 0;
 
@@ -53,7 +54,20 @@ const Post: React.FC<PostProps> = ({ post }) => {
     return Math.ceil(wordsNumber / 200);
   }, [post]);
 
-  const router = useRouter();
+  useEffect(() => {
+    const script = document.createElement('script');
+    const anchor = document.getElementById('inject-comments-for-uterances');
+    script.setAttribute('src', 'https://utteranc.es/client.js');
+    script.setAttribute('crossorigin', 'anonymous');
+    script.setAttribute('async', 'true');
+    script.setAttribute(
+      'repo',
+      process.env.NEXT_PUBLIC_COMMENTS_UTERANC_GITHUB_REPO
+    );
+    script.setAttribute('issue-term', 'url');
+    script.setAttribute('theme', 'photon-dark');
+    anchor.appendChild(script);
+  }, []);
 
   if (router.isFallback)
     return <div className={styles.loadingContainer}>Carregando...</div>;
@@ -99,6 +113,8 @@ const Post: React.FC<PostProps> = ({ post }) => {
             </div>
           ))}
         </article>
+
+        <div id="inject-comments-for-uterances" />
       </main>
     </>
   );
