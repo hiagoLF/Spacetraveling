@@ -70,3 +70,18 @@
     filter: brightness(0.7);
   }
 }
+
+.exitPreview {
+  margin-top: 60px;
+  background-color: var(--white);
+  border-radius: 4px;
+
+  a {
+    color: var(--dark);
+    font-weight: bold;
+    height: 58px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+}
