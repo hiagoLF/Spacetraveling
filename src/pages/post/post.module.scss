@@ -122,3 +122,20 @@
     }
   }
 }
+
+.exitPreview {
+  margin-top: 60px;
+  background-color: var(--white);
+  border-radius: 4px;
+  max-width: 721px;
+  margin: 30px auto;
+
+  a {
+    color: var(--dark);
+    font-weight: bold;
+    height: 58px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+}

@@ -43,9 +43,10 @@ interface PostProps {
     prevPost: PostNavigationProps;
     nextPost: PostNavigationProps;
   };
+  preview: boolean;
 }
 
-const Post: React.FC<PostProps> = ({ post, navigation }) => {
+const Post: React.FC<PostProps> = ({ post, navigation, preview }) => {
   const router = useRouter();
 
   const readingTime = useMemo(() => {
@@ -167,6 +168,14 @@ const Post: React.FC<PostProps> = ({ post, navigation }) => {
         </div>
 
         <div id="inject-comments-for-uterances" />
+
+        {preview && (
+          <aside className={styles.exitPreview}>
+            <Link href="/api/exit-preview">
+              <a>Sair do modo Preview</a>
+            </Link>
+          </aside>
+        )}
       </main>
     </>
   );
@@ -198,6 +207,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
 export const getStaticProps: GetStaticProps = async ({
   params,
   previewData,
+  preview = false,
 }) => {
   const { slug } = params;
   const prismic = getPrismicClient();
@@ -226,6 +236,7 @@ export const getStaticProps: GetStaticProps = async ({
   return {
     props: {
       post: response,
+      preview,
       navigation: {
         prevPost: prevPost
           ? {
