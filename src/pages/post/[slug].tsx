@@ -1,5 +1,6 @@
 import { useEffect, useMemo } from 'react';
 import { GetStaticPaths, GetStaticProps } from 'next';
+import Link from 'next/link';
 import Head from 'next/head';
 import Prismic from '@prismicio/client';
 import { FiCalendar } from 'react-icons/fi';
@@ -11,6 +12,11 @@ import Header from '../../components/Header';
 import { getPrismicClient } from '../../services/prismic';
 import styles from './post.module.scss';
 import formatDate from '../../services/formatDate';
+
+interface PostNavigationProps {
+  uid: string;
+  title: string;
+}
 
 interface Post {
   first_publication_date: string | null;
@@ -31,9 +37,13 @@ interface Post {
 
 interface PostProps {
   post: Post;
+  navigation: {
+    prevPost: PostNavigationProps;
+    nextPost: PostNavigationProps;
+  };
 }
 
-const Post: React.FC<PostProps> = ({ post }) => {
+const Post: React.FC<PostProps> = ({ post, navigation }) => {
   const router = useRouter();
 
   const readingTime = useMemo(() => {
@@ -114,6 +124,29 @@ const Post: React.FC<PostProps> = ({ post }) => {
           ))}
         </article>
 
+        <div className={styles.navigation}>
+          <div className={styles.prev}>
+            {navigation.prevPost && (
+              <Link href={`/post/${navigation.prevPost.uid}`}>
+                <a className={styles.prev}>
+                  <span>{navigation.prevPost.title}</span>
+                  <b>Post anterior</b>
+                </a>
+              </Link>
+            )}
+          </div>
+
+          <div>
+            {navigation.nextPost && (
+              <Link href={`/post/${navigation.nextPost.uid}`}>
+                <a className={styles.next}>
+                  <span>{navigation.nextPost.title}</span> <b>Próximo post</b>
+                </a>
+              </Link>
+            )}
+          </div>
+        </div>
+
         <div id="inject-comments-for-uterances" />
       </main>
     </>
@@ -153,9 +186,41 @@ export const getStaticProps: GetStaticProps = async ({
     ref: previewData?.ref ?? null,
   });
 
+  const nextPost = (
+    await prismic.query(Prismic.predicates.at('document.type', 'posts'), {
+      pageSize: 1,
+      after: `${response.id}`,
+      orderings: '[document.first_publication_date desc]',
+      fetch: ['posts.uid', 'posts.title'],
+    })
+  ).results[0];
+
+  const prevPost = (
+    await prismic.query(Prismic.predicates.at('document.type', 'posts'), {
+      pageSize: 1,
+      after: `${response.id}`,
+      orderings: '[document.first_publication_date]',
+      fetch: ['posts.uid', 'posts.title'],
+    })
+  ).results[0];
+
   return {
     props: {
       post: response,
+      navigation: {
+        prevPost: prevPost
+          ? {
+              uid: prevPost.uid,
+              title: prevPost.data.title,
+            }
+          : null,
+        nextPost: nextPost
+          ? {
+              uid: nextPost.uid,
+              title: nextPost.data.title,
+            }
+          : null,
+      },
     },
     revalidate: 60 * 60, // 1 hour
   };

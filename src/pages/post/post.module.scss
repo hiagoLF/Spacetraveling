@@ -66,3 +66,52 @@
   align-items: center;
   font-size: 1.5rem;
 }
+
+.navigation {
+  border-top: solid 1px rgba(214, 214, 214, 0.1);
+
+  max-width: 721px;
+  margin: 30px auto;
+  padding: 40px 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 1rem;
+
+  div {
+    a {
+      display: flex;
+      flex-direction: column;
+
+      span {
+        transition: color 0.2s;
+      }
+
+      b {
+        color: var(--pink);
+      }
+    }
+
+    &:hover {
+      a {
+        span {
+          color: var(--yellow-500);
+        }
+      }
+    }
+  }
+
+  .prev {
+    align-items: flex-start;
+    span {
+      text-align: left;
+    }
+  }
+
+  .next {
+    align-items: flex-end;
+    span {
+      text-align: right;
+    }
+  }
+}
