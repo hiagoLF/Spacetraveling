@@ -12,6 +12,7 @@ import Header from '../../components/Header';
 import { getPrismicClient } from '../../services/prismic';
 import styles from './post.module.scss';
 import formatDate from '../../services/formatDate';
+import formatHour from '../../services/formatHour';
 
 interface PostNavigationProps {
   uid: string;
@@ -20,6 +21,7 @@ interface PostNavigationProps {
 
 interface Post {
   first_publication_date: string | null;
+  last_publication_date: string | null;
   data: {
     title: string;
     banner: {
@@ -63,6 +65,18 @@ const Post: React.FC<PostProps> = ({ post, navigation }) => {
     );
     return Math.ceil(wordsNumber / 200);
   }, [post]);
+
+  const edited = useMemo(() => {
+    if (post.last_publication_date !== post.first_publication_date) {
+      return undefined;
+    }
+    return {
+      date: formatDate(post.last_publication_date),
+      hour: formatHour(post.last_publication_date),
+    };
+  }, [post.last_publication_date]);
+
+  console.log(edited);
 
   useEffect(() => {
     const script = document.createElement('script');
@@ -109,6 +123,11 @@ const Post: React.FC<PostProps> = ({ post, navigation }) => {
                 {readingTime} min
               </span>
             </section>
+            {edited && (
+              <h4>
+                * editado em {edited.date}, às {edited.hour}
+              </h4>
+            )}
           </div>
         </header>
 

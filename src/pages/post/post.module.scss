@@ -19,20 +19,27 @@
   section {
     display: flex;
     align-items: center;
+
+    time,
+    address,
+    span {
+      display: flex;
+      align-items: center;
+      margin-right: 20px;
+
+      :first-child {
+        margin-right: 5px;
+      }
+
+      color: var(--gray-200);
+    }
   }
 
-  time,
-  address,
-  span {
-    display: flex;
-    align-items: center;
-    margin-right: 20px;
-
-    :first-child {
-      margin-right: 5px;
-    }
-
+  h4 {
+    margin-top: 10px;
+    font-weight: 100;
     color: var(--gray-200);
+    font-style: italic;
   }
 }
 
